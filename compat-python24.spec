@@ -10,7 +10,7 @@
 Summary: An interpreted, interactive, object-oriented programming language
 Name: compat-python24
 Version: %{pybasever}.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: Python Software Foundation License v2
 Group: Development/Languages
 Source: http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.bz2
@@ -362,6 +362,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/python%{pybasever}/lib-dynload/_tkinter.so
 
 %changelog
+* Sun Aug 10 2008 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info - 2.4.5-2
+- rebuild for RPM Fusion
+
 * Thu Mar 27 2008 Jonathan Steffan <jonathansteffan a gmail.com> 2.4.5-1
 - Update to 2.4.5
 
