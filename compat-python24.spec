@@ -7,10 +7,13 @@
 %define demo_dir %{_libdir}/python%{pybasever}/Demo
 %define doc_tools_dir %{_libdir}/python%{pybasever}/Doc/tools
 
+# added by knurd on 20080810 to get it running for RPM Fusion
+%define _default_patch_fuzz 2
+
 Summary: An interpreted, interactive, object-oriented programming language
 Name: compat-python24
 Version: %{pybasever}.5
-Release: 2%{?dist}
+Release: 2%{?dist}.1
 License: Python Software Foundation License v2
 Group: Development/Languages
 Source: http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.bz2
@@ -367,6 +370,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/python%{pybasever}/lib-dynload/_tkinter.so
 
 %changelog
+* Sun Aug 10 2008 Thorsten Leemhuis <fedora at leemhuis.info> 2.4.5-2.1
+- _default_patch_fuzz 2 for now
+
 * Sun Aug 10 2008 Thorsten Leemhuis <fedora at leemhuis.info> 2.4.5-2
 - rebuild for RPM Fusion
 - apply 64bit patches on x86_64 and ppc64 only
