@@ -263,7 +263,8 @@ find $RPM_BUILD_ROOT%{_libdir}/python%{pybasever}/lib-dynload -type f | grep -v 
 rm -f $RPM_BUILD_ROOT%{_libdir}/python%{pybasever}/email/test/data/audiotest.au $RPM_BUILD_ROOT%{_libdir}/python%{pybasever}/test/audiotest.au
 
 # Fix bug #143667: python should own /usr/lib/python2.x on 64-bit machines
-%if %{_lib} == lib64
+#if %{_lib} == lib64
+%ifarch x86_64 ppc64
 install -d $RPM_BUILD_ROOT/usr/lib/python%{pybasever}/site-packages
 %endif
 
@@ -332,7 +333,8 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/python%{pybasever}/compiler
 %{_libdir}/python%{pybasever}/plat-linux2
 %{_libdir}/python%{pybasever}/hotshot
-%if %{_lib} == lib64
+#if %{_lib} == lib64
+%ifarch x86_64 ppc64
 %attr(0755,root,root) %dir /usr/lib/python%{pybasever}
 %attr(0755,root,root) %dir /usr/lib/python%{pybasever}/site-packages
 %endif
