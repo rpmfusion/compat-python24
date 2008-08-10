@@ -10,7 +10,7 @@
 Summary: An interpreted, interactive, object-oriented programming language
 Name: compat-python24
 Version: %{pybasever}.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: Python Software Foundation License v2
 Group: Development/Languages
 Source: http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.bz2
@@ -106,7 +106,10 @@ user interface for Python programming.
 
 %patch0 -p1 -b .rhconfig
 %patch3 -p1 -b .no_gui
-%if %{_lib} == lib64
+# disabled by knurd on 20080810, as it broken on rawhide
+# (likely due to the new rpm)
+#if %{_lib} == lib64
+%ifarch x86_64 ppc64
 %patch7 -p1 -b .lib64-regex
 %patch8 -p1 -b .lib64
 %patch9 -p0 -b .lib64-j
@@ -362,6 +365,10 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/python%{pybasever}/lib-dynload/_tkinter.so
 
 %changelog
+* Sun Aug 10 2008 Thorsten Leemhuis <fedora at leemhuis.info> 2.4.5-2
+- rebuild for RPM Fusion
+- apply 64bit patches on x86_64 and ppc64 only
+
 * Thu Mar 27 2008 Jonathan Steffan <jonathansteffan a gmail.com> 2.4.5-1
 - Update to 2.4.5
 
