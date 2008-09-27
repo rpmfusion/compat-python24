@@ -13,7 +13,7 @@
 Summary: An interpreted, interactive, object-oriented programming language
 Name: compat-python24
 Version: %{pybasever}.5
-Release: 2%{?dist}.1
+Release: 3%{?dist}
 License: Python Software Foundation License v2
 Group: Development/Languages
 Source: http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.bz2
@@ -33,7 +33,7 @@ Patch16: compat-python-2.4-gen-assert.patch
 Patch17: compat-python-2.4-webbrowser.patch
 Patch18: compat-python-2.4.3-cflags.patch
 Patch19: compat-python-2.4.3-locale.patch
-Patch20: compat-python-2.4.4-db46.patch
+Patch20: compat-python-2.4.5-db47.patch
 #Patch21: compat-python-2.4.4-db4-debug.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -370,6 +370,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/python%{pybasever}/lib-dynload/_tkinter.so
 
 %changelog
+* Sat Sep 27 2008 Hans de Goede <j.w.r.degoede@hhs.nl> 2.4.5-3
+- Fix building with db4 4.7.x
+
 * Sun Aug 10 2008 Thorsten Leemhuis <fedora at leemhuis.info> 2.4.5-2.1
 - _default_patch_fuzz 2 for now
 

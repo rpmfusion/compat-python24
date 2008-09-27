@@ -1,0 +1,116 @@
+diff -up Python-2.4.5/Modules/_bsddb.c.db4 Python-2.4.5/Modules/_bsddb.c
+--- Python-2.4.5/Modules/_bsddb.c.db4	2006-10-05 20:49:36.000000000 +0200
++++ Python-2.4.5/Modules/_bsddb.c	2008-09-27 22:06:55.000000000 +0200
+@@ -3831,6 +3831,7 @@ DBEnv_set_lk_detect(DBEnvObject* self, P
+ }
+ 
+ 
++#if (DBVER < 45)
+ static PyObject*
+ DBEnv_set_lk_max(DBEnvObject* self, PyObject* args)
+ {
+@@ -3846,6 +3847,7 @@ DBEnv_set_lk_max(DBEnvObject* self, PyOb
+     RETURN_IF_ERR();
+     RETURN_NONE();
+ }
++#endif
+ 
+ 
+ #if (DBVER >= 32)
+@@ -4532,7 +4534,9 @@ static PyMethodDef DBEnv_methods[] = {
+     {"set_lg_dir",      (PyCFunction)DBEnv_set_lg_dir,       METH_VARARGS},
+     {"set_lg_max",      (PyCFunction)DBEnv_set_lg_max,       METH_VARARGS},
+     {"set_lk_detect",   (PyCFunction)DBEnv_set_lk_detect,    METH_VARARGS},
++#if (DBVER < 45)
+     {"set_lk_max",      (PyCFunction)DBEnv_set_lk_max,       METH_VARARGS},
++#endif
+ #if (DBVER >= 32)
+     {"set_lk_max_locks", (PyCFunction)DBEnv_set_lk_max_locks, METH_VARARGS},
+     {"set_lk_max_lockers", (PyCFunction)DBEnv_set_lk_max_lockers, METH_VARARGS},
+@@ -4575,11 +4579,17 @@ static PyObject*
+ DBEnv_getattr(DBEnvObject* self, char *name)
+ {
+     if (!strcmp(name, "db_home")) {
++        const char *db_home;
+         CHECK_ENV_NOT_CLOSED(self);
+-        if (self->db_env->db_home == NULL) {
++#if (DBVER >= 47)
++        self->db_env->get_home(self->db_env, &db_home);
++#else
++        db_home = self->db_env->db_home;
++#endif
++        if (db_home == NULL) {
+             RETURN_NONE();
+         }
+-        return PyString_FromString(self->db_env->db_home);
++        return PyString_FromString(db_home);
+     }
+ 
+     return Py_FindMethod(DBEnv_methods, (PyObject* )self, name);
+@@ -5039,7 +5049,9 @@ DL_EXPORT(void) init_bsddb(void)
+     ADD_INT(d, DB_AFTER);
+     ADD_INT(d, DB_APPEND);
+     ADD_INT(d, DB_BEFORE);
++#if (DBVER < 45)
+     ADD_INT(d, DB_CACHED_COUNTS);
++#endif
+ #if (DBVER >= 41)
+     _addIntToDict(d, "DB_CHECKPOINT", 0);
+ #else
+@@ -5074,7 +5086,9 @@ DL_EXPORT(void) init_bsddb(void)
+     ADD_INT(d, DB_POSITION);
+     ADD_INT(d, DB_PREV);
+     ADD_INT(d, DB_PREV_NODUP);
++#if (DBVER < 45)
+     ADD_INT(d, DB_RECORDCOUNT);
++#endif
+     ADD_INT(d, DB_SET);
+     ADD_INT(d, DB_SET_RANGE);
+     ADD_INT(d, DB_SET_RECNO);
+@@ -5130,8 +5144,13 @@ DL_EXPORT(void) init_bsddb(void)
+     ADD_INT(d, DB_TIME_NOTGRANTED);
+     ADD_INT(d, DB_TXN_NOT_DURABLE);
+     ADD_INT(d, DB_TXN_WRITE_NOSYNC);
++#if (DBVER >= 47)
++    ADD_INT(d, DB_LOG_AUTO_REMOVE);
++    ADD_INT(d, DB_LOG_DIRECT);
++#else
+     ADD_INT(d, DB_LOG_AUTOREMOVE);
+     ADD_INT(d, DB_DIRECT_LOG);
++#endif
+     ADD_INT(d, DB_DIRECT_DB);
+     ADD_INT(d, DB_INIT_REP);
+     ADD_INT(d, DB_ENCRYPT);
+@@ -5139,7 +5158,11 @@ DL_EXPORT(void) init_bsddb(void)
+ #endif
+ 
+ #if (DBVER >= 43)
++#if (DBVER >= 47)
++    ADD_INT(d, DB_LOG_IN_MEMORY);
++#else
+     ADD_INT(d, DB_LOG_INMEMORY);
++#endif
+     ADD_INT(d, DB_BUFFER_SMALL);
+ #endif
+ 
+diff -up Python-2.4.5/setup.py.db4 Python-2.4.5/setup.py
+--- Python-2.4.5/setup.py.db4	2008-09-27 21:08:21.000000000 +0200
++++ Python-2.4.5/setup.py	2008-09-27 22:09:43.000000000 +0200
+@@ -522,7 +522,7 @@ class PyBuildExt(build_ext):
+         #
+         # http://www.sleepycat.com/update/index.html
+ 
+-        max_db_ver = (4, 4)
++        max_db_ver = (4, 7)
+         min_db_ver = (3, 2)
+         db_setup_debug = False   # verbose debug prints from this script?
+ 
+@@ -539,7 +539,7 @@ class PyBuildExt(build_ext):
+             '/sw/include/db3',
+         ]
+         # 4.x minor number specific paths
+-        for x in (0,1,2,3,4):
++        for x in (0,1,2,3,4,5,6,7):
+             db_inc_paths.append('/usr/include/db4%d' % x)
+             db_inc_paths.append('/usr/include/db4.%d' % x)
+             db_inc_paths.append('/usr/local/BerkeleyDB.4.%d/include' % x)
