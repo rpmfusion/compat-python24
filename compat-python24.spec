@@ -13,7 +13,7 @@
 Summary: An interpreted, interactive, object-oriented programming language
 Name: compat-python24
 Version: %{pybasever}.5
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: Python Software Foundation License v2
 Group: Development/Languages
 Source: http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.bz2
@@ -370,6 +370,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/python%{pybasever}/lib-dynload/_tkinter.so
 
 %changelog
+* Sun Mar 29 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 2.4.5-5
+- rebuild for new F11 features
+
 * Wed Feb 04 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 2.4.5-4
 - rebuild for new ssl
 
