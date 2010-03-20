@@ -12,8 +12,8 @@
 
 Summary: An interpreted, interactive, object-oriented programming language
 Name: compat-python24
-Version: %{pybasever}.5
-Release: 6%{?dist}
+Version: %{pybasever}.6
+Release: 1%{?dist}
 License: Python Software Foundation License v2
 Group: Development/Languages
 Source: http://www.python.org/ftp/python/%{version}/Python-%{version}.tar.bz2
@@ -34,7 +34,8 @@ Patch17: compat-python-2.4-webbrowser.patch
 Patch18: compat-python-2.4.3-cflags.patch
 Patch19: compat-python-2.4.3-locale.patch
 Patch20: compat-python-2.4.5-db47.patch
-#Patch21: compat-python-2.4.4-db4-debug.patch
+Patch21: compat-python-2.4-db48.patch
+Patch22: compat-python-2.4-config-db48.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: readline-devel, libtermcap-devel, openssl-devel, gmp-devel
@@ -43,7 +44,13 @@ BuildRequires: libGL-devel tk tix gcc-c++ libX11-devel glibc-devel
 BuildRequires: bzip2 tar /usr/bin/find pkgconfig tcl-devel tk-devel
 BuildRequires: tix-devel bzip2-devel
 BuildRequires: autoconf
+# Make sure db4 4.8 is used if fedora >= 13
+%if 0%{?fedora} >= 13
+BuildRequires: db4-devel >= 4.8
+%else
 BuildRequires: db4-devel >= 4.3
+%endif
+
 URL: http://www.python.org/
 Provides: python-abi = 2.4, python(abi) = 2.4
 
@@ -125,7 +132,12 @@ user interface for Python programming.
 %patch18 -p1 -b .cflags
 %patch19 -p2 -b .locale
 %patch20 -p1 -b .db4
-#%%patch21 -p1 -b .db-debug
+# Conditionally patch for db4 4.8
+%if 0%{?fedora} >= 13
+%patch21 -p1 -b .db48
+%patch22 -p1 -b .db48
+%endif
+
 
 # This shouldn't be necesarry, but is right now (2.2a3)
 find -name "*~" |xargs rm -f
@@ -370,6 +382,13 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/python%{pybasever}/lib-dynload/_tkinter.so
 
 %changelog
+* Sat Mar 20 2010 Jonathan Steffan <jonathansteffan a gmail.com> - 2.4.6-1
+- Update to 2.4.6
+- Add a patch for bdb 4.8
+
+* Sat Oct 10 2009 Thorsten Leemhuis <fedora [AT] leemhuis [DOT] info> - 2.4.5-7
+- rebuilt
+
 * Thu Apr  2 2009 Hans de Goede <j.w.r.degoede@hhs.nl> 2.4.5-6
 - Link db4 module against db-4.7 not 4.6 (oops)
 
